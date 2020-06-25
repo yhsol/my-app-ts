@@ -5,6 +5,7 @@ import Counter from "./hooks/useState/Counter";
 import Input from "./hooks/useState/Input";
 import ReducerSample from "./hooks/useReducer/ReducerSample";
 import RefSample from "./hooks/useRef/RefSample";
+import DataFetching from "./hooks/dataFetching/DataFetching";
 
 function App() {
   const onSubmit = (form: { name: string; desc: string }) => {
@@ -12,10 +13,7 @@ function App() {
   };
   return (
     <div>
-      <Counter />
-      <Input onSubmit={onSubmit} />
-      <ReducerSample />
-      <RefSample onSubmit={onSubmit} />
+      <DataFetching />
     </div>
   );
 }
