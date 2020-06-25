@@ -10,13 +10,14 @@ export type HitsT = {
 function DataFetching() {
   const [refresh, setRefresh] = useState(false);
   const [query, setQeury] = useState("redux");
-  const { data, isLoading, isError, setUrl } = useDataFetching(
+  const { state, setUrl } = useDataFetching(
     "https://hn.algolia.com/api/v1/search?query=redux",
     {
       hits: [],
     }
   );
-  const [search, setSearch] = useState(`/search?query=${query}`);
+  const { data, isLoading, isError } = state;
+  // const [search, setSearch] = useState(`/search?query=${query}`);
 
   const toggleRefresh = () => {
     setRefresh(!refresh);
@@ -35,6 +36,8 @@ function DataFetching() {
     setUrl(`http://hn.algolia.com/api/v1/search?query=${query}`);
   };
 
+  console.log("data: ", data);
+
   return (
     <div>
       <button onClick={toggleRefresh}>refresh</button>
@@ -51,8 +54,8 @@ function DataFetching() {
         !isError && (
           <ul>
             {data &&
-              data.hits.map((item: DataT) => (
-                <li key={item.objectId}>
+              data.hits.map((item: DataT, index: number) => (
+                <li key={`${item.objectId}_${index}`}>
                   <a href={item.url}>{item.title}</a>
                 </li>
               ))}
