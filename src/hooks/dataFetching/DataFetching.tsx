@@ -10,7 +10,7 @@ export type HitsT = {
 function DataFetching() {
   const [refresh, setRefresh] = useState(false);
   const [query, setQeury] = useState("redux");
-  const { state, setUrl } = useDataFetching(
+  const { state, urlDispatch } = useDataFetching(
     "https://hn.algolia.com/api/v1/search?query=redux",
     {
       hits: [],
@@ -28,12 +28,18 @@ function DataFetching() {
   };
 
   const onSetSearch = () => {
-    setUrl(`http://hn.algolia.com/api/v1/search?query=${query}`);
+    urlDispatch({
+      type: "CHANGE_URL",
+      payload: `http://hn.algolia.com/api/v1/search?query=${query}`,
+    });
   };
 
   const onSetSearchSubmit = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-    setUrl(`http://hn.algolia.com/api/v1/search?query=${query}`);
+    urlDispatch({
+      type: "CHANGE_URL",
+      payload: `http://hn.algolia.com/api/v1/search?query=${query}`,
+    });
   };
 
   console.log("data: ", data);

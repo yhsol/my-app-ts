@@ -14,26 +14,27 @@ type Action =
   | { type: "FETCH_SUCCESS"; payload: any | null }
   | { type: "FETCH_FAILURE" };
 
+type UrlState = {
+  url: string;
+};
+
+type UrlAction = { type: "CHANGE_URL"; payload: string };
+
 export type ReturnDataT = {
-  // data: any | null;
-  // isLoading: boolean;
-  // isError: boolean;
   state: State;
-  setUrl: React.Dispatch<React.SetStateAction<string>>;
+  // setUrl: React.Dispatch<React.SetStateAction<string>>;
+  urlDispatch: any;
 };
 
 const dataFetchReducer = (state: State, action: Action) => {
   switch (action.type) {
     case "FETCH_INIT":
-      // setIsLoading(true);
-      // setIsError(false);
       return {
         ...state,
         isLoading: true,
         isError: false,
       };
     case "FETCH_SUCCESS":
-      // setData(result.data);
       return {
         ...state,
         isLoading: false,
@@ -41,13 +42,23 @@ const dataFetchReducer = (state: State, action: Action) => {
         data: action.payload,
       };
     case "FETCH_FAILURE":
-      // setIsError(true);
-      // setIsLoading(false);
       return {
         ...state,
         isLoading: false,
         isError: true,
       };
+    default:
+      throw new Error();
+  }
+};
+
+const urlReducer = (state: UrlState, action: UrlAction) => {
+  switch (action.type) {
+    case "CHANGE_URL":
+      return {
+        url: action.payload,
+      };
+
     default:
       throw new Error();
   }
@@ -59,10 +70,10 @@ const useDataFetching = (initialUrl: string, initialData: any): ReturnDataT => {
     isError: false,
     data: initialData,
   });
-  const [url, setUrl] = useState(initialUrl);
-  // const [data, setData] = useState<any | null>(initialData);
-  // const [isLoading, setIsLoading] = useState(false);
-  // const [isError, setIsError] = useState(false);
+  // const [url, setUrl] = useState(initialUrl);
+  const [urlState, urlDispatch] = useReducer(urlReducer, {
+    url: initialUrl,
+  });
 
   useEffect(() => {
     let didCancel = false;
@@ -71,7 +82,7 @@ const useDataFetching = (initialUrl: string, initialData: any): ReturnDataT => {
       dispatch({ type: "FETCH_INIT" });
 
       try {
-        const result = await axios(url);
+        const result = await axios(urlState.url);
         if (!didCancel) {
           dispatch({ type: "FETCH_SUCCESS", payload: result.data });
         }
@@ -86,9 +97,9 @@ const useDataFetching = (initialUrl: string, initialData: any): ReturnDataT => {
     return () => {
       didCancel = true;
     };
-  }, [url]);
+  }, [urlState.url]);
 
-  return { state, setUrl };
+  return { state, urlDispatch };
 };
 
 export default useDataFetching;
